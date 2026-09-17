@@ -22,17 +22,28 @@
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
-      --background: #f1f5f9;
+
+      --background: #f8fafc;
       --card: #ffffff;
+
       --text: #0f172a;
       --muted: #64748b;
+
+      --border: #e2e8f0;
+
       --success: #16a34a;
       --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+
       --error: #dc2626;
       --error-bg: #fef2f2;
+      --error-border: #fecaca;
+
       --warning: #d97706;
       --warning-bg: #fffbeb;
-      --border: #e2e8f0;
+      --warning-border: #fde68a;
+
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.07);
     }
 
     html,
@@ -57,6 +68,14 @@
       color: var(--text);
     }
 
+    button {
+      font-family: inherit;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
     .app {
       min-height: 100vh;
       min-height: 100dvh;
@@ -65,117 +84,218 @@
       flex-direction: column;
     }
 
-    /* HEADER */
+    /* =========================
+       HEADER
+    ========================= */
 
     .header {
+      height: 72px;
+
+      display: flex;
+      align-items: center;
+
+      padding: 0 28px;
+
       background: var(--card);
       border-bottom: 1px solid var(--border);
-      padding:
-        max(18px, env(safe-area-inset-top))
-        20px
-        16px;
+    }
 
-      text-align: center;
+    .header-content {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .brand-icon {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
 
       display: flex;
       align-items: center;
       justify-content: center;
 
       background: #eff6ff;
-      border-radius: 12px;
+      border-radius: 11px;
 
-      font-size: 22px;
-    }
-
-    .brand-text {
-      text-align: left;
+      font-size: 20px;
     }
 
     .brand-title {
       margin: 0;
-      font-size: 18px;
+
+      font-size: 16px;
       font-weight: 700;
-      line-height: 1.2;
     }
 
     .brand-subtitle {
-      margin: 3px 0 0;
-      font-size: 12px;
+      margin: 2px 0 0;
+
       color: var(--muted);
+      font-size: 12px;
     }
 
-    /* MAIN */
+    .organizer-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 7px 11px;
+
+      background: #f8fafc;
+      border: 1px solid var(--border);
+
+      border-radius: 999px;
+
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .online-dot {
+      width: 7px;
+      height: 7px;
+
+      border-radius: 50%;
+
+      background: var(--success);
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
 
     .main {
       width: 100%;
-      max-width: 600px;
+      max-width: 1200px;
 
       margin: 0 auto;
-      padding: 20px;
+
+      padding: 28px;
 
       flex: 1;
-
-      display: flex;
-      flex-direction: column;
     }
 
-    .intro {
-      text-align: center;
-      margin: 4px 0 18px;
+    .page-heading {
+      margin-bottom: 22px;
     }
 
-    .intro h1 {
-      margin: 0 0 6px;
+    .page-heading h1 {
+      margin: 0 0 5px;
 
-      font-size: clamp(24px, 6vw, 32px);
-      line-height: 1.2;
+      font-size: 26px;
       font-weight: 750;
+      letter-spacing: -0.4px;
     }
 
-    .intro p {
+    .page-heading p {
       margin: 0;
 
       color: var(--muted);
-      font-size: 15px;
+      font-size: 14px;
     }
 
-    /* SCANNER CARD */
+    /* =========================
+       DASHBOARD
+    ========================= */
 
-    .scanner-card {
+    .dashboard {
+      display: grid;
+
+      grid-template-columns:
+        minmax(0, 1.45fr)
+        minmax(300px, 0.75fr);
+
+      gap: 20px;
+
+      align-items: stretch;
+    }
+
+    /* =========================
+       SCANNER CARD
+    ========================= */
+
+    .scanner-card,
+    .result-card {
       background: var(--card);
 
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 18px;
 
-      padding: 16px;
-
-      box-shadow:
-        0 4px 20px rgba(15, 23, 42, 0.06);
+      box-shadow: var(--shadow);
     }
+
+    .scanner-card {
+      padding: 18px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .card-title-icon {
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #eff6ff;
+      border-radius: 9px;
+
+      font-size: 17px;
+    }
+
+    .card-title h2 {
+      margin: 0;
+
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .card-title p {
+      margin: 2px 0 0;
+
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* =========================
+       SCANNER
+    ========================= */
 
     .scanner-container {
       position: relative;
 
       width: 100%;
 
+      min-height: 420px;
+
       overflow: hidden;
 
-      border-radius: 16px;
       background: #0f172a;
 
-      min-height: 300px;
+      border-radius: 14px;
 
       display: flex;
       align-items: center;
@@ -186,13 +306,13 @@
       width: 100%;
     }
 
-    /* Make html5-qrcode responsive */
-
     #reader video {
       width: 100% !important;
-      height: auto !important;
-      border-radius: 16px;
+      height: 100% !important;
+
       object-fit: cover;
+
+      border-radius: 14px;
     }
 
     #reader img {
@@ -200,64 +320,130 @@
     }
 
     #reader__scan_region {
-      min-height: 280px;
+      min-height: 390px;
     }
 
-    /* START BUTTON */
+    /* Hide html5-qrcode's camera selection */
+    #reader__dashboard_section_csr button:not(#reader__dashboard_section_swaplink) {
+      display: none !important;
+    }
 
-    .start-section {
+    #reader__dashboard_section_swaplink {
+      display: none !important;
+    }
+
+    #reader__dashboard {
+      padding: 0 !important;
+    }
+
+    /* =========================
+       SCANNER OVERLAY
+    ========================= */
+
+    .scanner-overlay {
+      position: absolute;
+
+      inset: 0;
+
+      pointer-events: none;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scan-frame {
+      width: 58%;
+      max-width: 300px;
+      aspect-ratio: 1;
+
+      border: 2px solid rgba(255,255,255,0.9);
+
+      border-radius: 22px;
+
+      box-shadow:
+        0 0 0 999px rgba(15, 23, 42, 0.18);
+    }
+
+    /* =========================
+       START STATE
+    ========================= */
+
+    .start-overlay {
+      position: absolute;
+
+      inset: 0;
+
+      z-index: 5;
+
+      display: flex;
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
+
+      padding: 30px;
+
       text-align: center;
-      padding: 45px 20px;
+
+      background: #0f172a;
+
+      color: white;
     }
 
-    .camera-icon {
-      width: 72px;
-      height: 72px;
-
-      margin: 0 auto 18px;
+    .start-icon {
+      width: 58px;
+      height: 58px;
 
       display: flex;
       align-items: center;
       justify-content: center;
 
-      background: #eff6ff;
-      border-radius: 50%;
+      margin-bottom: 15px;
 
-      font-size: 32px;
+      background: rgba(255,255,255,0.1);
+
+      border: 1px solid rgba(255,255,255,0.12);
+
+      border-radius: 16px;
+
+      font-size: 25px;
     }
 
-    .start-section h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
+    .start-overlay h2 {
+      margin: 0 0 6px;
+
+      font-size: 19px;
     }
 
-    .start-section p {
-      margin: 0 0 22px;
+    .start-overlay p {
+      max-width: 300px;
 
-      color: var(--muted);
-      font-size: 14px;
+      margin: 0 0 20px;
+
+      color: #cbd5e1;
+
+      font-size: 13px;
       line-height: 1.5;
     }
 
     .start-button {
-      width: 100%;
-      max-width: 320px;
-
       border: none;
-      border-radius: 12px;
 
-      padding: 15px 20px;
+      padding: 12px 22px;
+
+      border-radius: 10px;
 
       background: var(--primary);
       color: white;
 
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
 
       cursor: pointer;
 
       transition:
-        background 0.2s,
+        background 0.15s,
         transform 0.1s;
     }
 
@@ -266,32 +452,47 @@
     }
 
     .start-button:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
 
-    /* STATUS */
+    /* =========================
+       SCANNER FOOTER
+    ========================= */
 
-    .status {
+    .scanner-footer {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
 
-      gap: 8px;
+      margin-top: 13px;
+    }
 
-      margin-top: 14px;
+    .scanner-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
 
       color: var(--muted);
-      font-size: 13px;
+
+      font-size: 12px;
+      font-weight: 600;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
 
       border-radius: 50%;
+
       background: var(--success);
 
       animation: pulse 1.5s infinite;
+    }
+
+    .camera-info {
+      color: var(--muted);
+
+      font-size: 11px;
     }
 
     @keyframes pulse {
@@ -308,148 +509,363 @@
       }
     }
 
-    /* RESULT */
+    /* =========================
+       RESULT CARD
+    ========================= */
 
-    #result {
-      display: none;
-
-      margin-top: 16px;
+    .result-card {
+      min-height: 100%;
 
       padding: 22px;
 
-      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .result-card-header {
+      padding-bottom: 15px;
+
+      border-bottom: 1px solid var(--border);
+
+      margin-bottom: 18px;
+    }
+
+    .result-card-header h2 {
+      margin: 0;
+
+      font-size: 15px;
+    }
+
+    .result-card-header p {
+      margin: 4px 0 0;
+
+      color: var(--muted);
+
+      font-size: 11px;
+    }
+
+    /* =========================
+       RESULT
+    ========================= */
+
+    #result {
+      flex: 1;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 300px;
 
       text-align: center;
+
+      border-radius: 14px;
+
+      padding: 25px;
+    }
+
+    #result.empty {
+      background: #f8fafc;
+
+      border: 1px dashed var(--border);
+
+      color: var(--muted);
     }
 
     #result.success {
       background: var(--success-bg);
-      border: 1px solid #bbf7d0;
+
+      border: 1px solid var(--success-border);
+
       color: #166534;
     }
 
     #result.error {
       background: var(--error-bg);
-      border: 1px solid #fecaca;
+
+      border: 1px solid var(--error-border);
+
       color: #991b1b;
     }
 
     #result.warning {
       background: var(--warning-bg);
-      border: 1px solid #fde68a;
+
+      border: 1px solid var(--warning-border);
+
       color: #92400e;
     }
 
     .result-icon {
-      width: 58px;
-      height: 58px;
-
-      margin: 0 auto 12px;
+      width: 56px;
+      height: 56px;
 
       display: flex;
       align-items: center;
       justify-content: center;
 
+      margin-bottom: 13px;
+
       border-radius: 50%;
 
-      background: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.75);
 
-      font-size: 28px;
+      font-size: 26px;
     }
 
     #result h2 {
-      margin: 0 0 8px;
+      margin: 0 0 7px;
 
-      font-size: 20px;
+      font-size: 19px;
     }
 
     #result h3 {
       margin: 0 0 14px;
 
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 750;
     }
 
     #result p {
       margin: 6px 0;
 
-      font-size: 14px;
+      font-size: 13px;
     }
 
-    /* FOOTER */
+    .result-details {
+      width: 100%;
+
+      max-width: 270px;
+
+      margin-top: 8px;
+
+      padding-top: 10px;
+
+      border-top: 1px solid rgba(15,23,42,0.08);
+    }
+
+    /* EMPTY RESULT */
+
+    .empty-icon {
+      width: 52px;
+      height: 52px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin-bottom: 12px;
+
+      background: #e2e8f0;
+
+      border-radius: 50%;
+
+      font-size: 23px;
+    }
+
+    .empty-title {
+      margin-bottom: 5px;
+
+      color: var(--text);
+
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .empty-text {
+      max-width: 240px;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
 
     .footer {
-      padding:
-        14px
-        20px
-        max(14px, env(safe-area-inset-bottom));
+      padding: 14px 20px;
 
       text-align: center;
 
       color: var(--muted);
-      font-size: 11px;
+
+      font-size: 10px;
     }
 
-    /* MOBILE */
+    /* =========================
+       TABLET
+    ========================= */
 
-    @media (max-width: 480px) {
+    @media (max-width: 900px) {
+
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .result-card {
+        min-height: 280px;
+      }
+
+      #result {
+        min-height: 230px;
+      }
+
+      .scanner-container {
+        min-height: 380px;
+      }
+
+      #reader__scan_region {
+        min-height: 350px;
+      }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      .header {
+        height: 62px;
+
+        padding:
+          max(8px, env(safe-area-inset-top))
+          14px
+          8px;
+      }
+
+      .brand-icon {
+        width: 34px;
+        height: 34px;
+
+        font-size: 17px;
+      }
+
+      .brand-title {
+        font-size: 14px;
+      }
+
+      .brand-subtitle {
+        font-size: 10px;
+      }
+
+      .organizer-badge {
+        padding: 6px 9px;
+
+        font-size: 10px;
+      }
 
       .main {
         padding: 14px;
       }
 
+      .page-heading {
+        margin-bottom: 13px;
+      }
+
+      .page-heading h1 {
+        font-size: 21px;
+      }
+
+      .page-heading p {
+        font-size: 12px;
+      }
+
+      .dashboard {
+        gap: 12px;
+      }
+
       .scanner-card {
         padding: 10px;
 
-        border-radius: 18px;
+        border-radius: 15px;
+      }
+
+      .card-header {
+        margin-bottom: 9px;
+      }
+
+      .card-title-icon {
+        width: 30px;
+        height: 30px;
+
+        font-size: 15px;
+      }
+
+      .card-title h2 {
+        font-size: 13px;
+      }
+
+      .card-title p {
+        font-size: 10px;
       }
 
       .scanner-container {
-        border-radius: 14px;
+        min-height: 300px;
+
+        border-radius: 11px;
+      }
+
+      #reader__scan_region {
         min-height: 280px;
       }
 
-      #reader__scan_region {
-        min-height: 260px;
+      .scan-frame {
+        width: 68%;
+        max-width: 240px;
       }
 
-      .intro {
-        margin-bottom: 14px;
+      .scanner-footer {
+        margin-top: 9px;
       }
 
-      .intro h1 {
-        font-size: 25px;
+      .scanner-status {
+        font-size: 10px;
       }
 
-      .intro p {
-        font-size: 14px;
+      .camera-info {
+        font-size: 9px;
       }
-    }
 
-    /* LANDSCAPE PHONES */
+      .result-card {
+        padding: 12px;
 
-    @media (orientation: landscape) and (max-height: 600px) {
+        border-radius: 15px;
 
-      .header {
-        padding-top: 10px;
+        min-height: 240px;
+      }
+
+      .result-card-header {
         padding-bottom: 10px;
-      }
-
-      .main {
-        padding-top: 10px;
-        padding-bottom: 10px;
-      }
-
-      .intro {
         margin-bottom: 10px;
       }
 
-      .scanner-container {
-        min-height: 220px;
+      #result {
+        min-height: 190px;
+
+        padding: 18px;
       }
 
-      #reader__scan_region {
-        min-height: 200px;
+      #result h2 {
+        font-size: 17px;
+      }
+
+      #result h3 {
+        font-size: 16px;
+      }
+
+      #result p {
+        font-size: 12px;
+      }
+
+      .result-icon {
+        width: 46px;
+        height: 46px;
+
+        font-size: 22px;
       }
 
       .footer {
@@ -457,23 +873,44 @@
       }
     }
 
-    /* TABLETS / DESKTOP */
+    /* =========================
+       SHORT LANDSCAPE
+    ========================= */
 
-    @media (min-width: 768px) {
+    @media (orientation: landscape) and (max-height: 600px) {
 
-      .main {
-        padding-top: 35px;
+      .header {
+        height: 52px;
       }
 
-      .scanner-card {
-        padding: 20px;
+      .main {
+        padding: 10px 18px;
+      }
+
+      .page-heading {
+        display: none;
+      }
+
+      .dashboard {
+        grid-template-columns: 1.4fr 0.8fr;
       }
 
       .scanner-container {
-        min-height: 400px;
+        min-height: 250px;
+      }
+
+      #reader__scan_region {
+        min-height: 230px;
+      }
+
+      #result {
+        min-height: 220px;
+      }
+
+      .footer {
+        display: none;
       }
     }
-
   </style>
 </head>
 
@@ -485,21 +922,31 @@
 
   <header class="header">
 
-    <div class="brand">
+    <div class="header-content">
 
-      <div class="brand-icon">
-        🎓
+      <div class="brand">
+
+        <div class="brand-icon">
+          🎓
+        </div>
+
+        <div>
+          <p class="brand-title">
+            Orientation Attendance
+          </p>
+
+          <p class="brand-subtitle">
+            Organizer Scanner
+          </p>
+        </div>
+
       </div>
 
-      <div class="brand-text">
+      <div class="organizer-badge">
 
-        <p class="brand-title">
-          Orientation Attendance
-        </p>
+        <span class="online-dot"></span>
 
-        <p class="brand-subtitle">
-          Organizer Scanner
-        </p>
+        Scanner Ready
 
       </div>
 
@@ -512,86 +959,176 @@
 
   <main class="main">
 
-    <div class="intro">
+    <div class="page-heading">
 
       <h1>
-        Scan Student QR
+        Student Check-in
       </h1>
 
       <p>
-        Scan the student's QR code to record attendance.
+        Scan a student's QR code to record their attendance.
       </p>
 
     </div>
 
 
-    <!-- SCANNER -->
+    <div class="dashboard">
 
-    <section class="scanner-card">
+      <!-- =====================
+           SCANNER
+      ====================== -->
 
-      <div
-        id="startSection"
-        class="start-section"
-      >
+      <section class="scanner-card">
 
-        <div class="camera-icon">
-          📷
+        <div class="card-header">
+
+          <div class="card-title">
+
+            <div class="card-title-icon">
+              📷
+            </div>
+
+            <div>
+
+              <h2>
+                QR Scanner
+              </h2>
+
+              <p>
+                Position the QR code inside the frame
+              </p>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <h2>
-          Ready to scan
-        </h2>
 
-        <p>
-          Tap the button below to allow camera access
-          and start scanning.
-        </p>
-
-        <button
-          id="startButton"
-          class="start-button"
-          onclick="startScanner()"
+        <div
+          class="scanner-container"
+          id="scannerContainer"
         >
-          Start Scanner
-        </button>
 
-      </div>
+          <!-- Start overlay -->
+
+          <div
+            class="start-overlay"
+            id="startSection"
+          >
+
+            <div class="start-icon">
+              📷
+            </div>
+
+            <h2>
+              Ready to scan
+            </h2>
+
+            <p>
+              Allow camera access to start scanning.
+            </p>
+
+            <button
+              id="startButton"
+              class="start-button"
+              onclick="startScanner()"
+            >
+              Start Scanner
+            </button>
+
+          </div>
 
 
-      <div
-        id="scannerContainer"
-        class="scanner-container"
-        style="display:none;"
-      >
+          <!-- QR Reader -->
 
-        <div id="reader"></div>
-
-      </div>
+          <div id="reader"></div>
 
 
-      <div
-        id="status"
-        class="status"
-        style="display:none;"
-      >
+          <!-- Scanner frame -->
 
-        <span class="status-dot"></span>
+          <div
+            class="scanner-overlay"
+            id="scannerOverlay"
+            style="display:none;"
+          >
 
-        <span>
-          Scanner is active
-        </span>
+            <div class="scan-frame"></div>
 
-      </div>
+          </div>
+
+        </div>
 
 
-      <div id="result"></div>
+        <div class="scanner-footer">
 
-    </section>
+          <div
+            class="scanner-status"
+            id="scannerStatus"
+          >
+
+            <span class="status-dot"></span>
+
+            <span id="statusText">
+              Scanner is ready
+            </span>
+
+          </div>
+
+          <div class="camera-info">
+            Rear camera
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================
+           RESULT
+      ====================== -->
+
+      <section class="result-card">
+
+        <div class="result-card-header">
+
+          <h2>
+            Attendance Activity
+          </h2>
+
+          <p>
+            Latest scan result
+          </p>
+
+        </div>
+
+
+        <div
+          id="result"
+          class="empty"
+        >
+
+          <div class="empty-icon">
+            ✓
+          </div>
+
+          <div class="empty-title">
+            Waiting for student
+          </div>
+
+          <div class="empty-text">
+            Scan a student's QR code and their attendance
+            details will appear here.
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
 
   </main>
 
-
-  <!-- FOOTER -->
 
   <footer class="footer">
     Orientation Attendance System
@@ -603,7 +1140,7 @@
 <script>
 
   /*
-   * GOOGLE APPS SCRIPT BACKEND
+   * BACKEND
    */
 
   const BACKEND_URL =
@@ -611,8 +1148,8 @@
 
 
   let scanner = null;
-
   let scanning = false;
+  let processing = false;
 
 
   /*
@@ -621,61 +1158,123 @@
 
   function startScanner() {
 
-    if (scanning) {
+    if (scanning || processing) {
       return;
     }
 
 
-    document.getElementById("startSection").style.display =
-      "none";
+    const startSection =
+      document.getElementById("startSection");
 
-    document.getElementById("scannerContainer").style.display =
-      "block";
+    const overlay =
+      document.getElementById("scannerOverlay");
 
-    document.getElementById("status").style.display =
-      "flex";
+    startSection.style.display = "none";
+
+    overlay.style.display = "flex";
 
 
-    scanner = new Html5QrcodeScanner(
+    updateStatus(
+      "Scanner is active",
+      true
+    );
 
-      "reader",
 
-      {
-        fps: 10,
+    scanner =
+      new Html5Qrcode("reader");
 
-        qrbox: function(viewfinderWidth, viewfinderHeight) {
 
-          const minEdge =
-            Math.min(viewfinderWidth, viewfinderHeight);
+    /*
+     * IMPORTANT:
+     *
+     * facingMode: environment
+     * forces the rear/back camera.
+     *
+     * No front/back camera selector.
+     */
 
-          const size =
-            Math.min(280, Math.max(180, minEdge * 0.65));
-
-          return {
-            width: size,
-            height: size
-          };
-
+    scanner
+      .start(
+        {
+          facingMode: {
+            exact: "environment"
+          }
         },
 
-        rememberLastUsedCamera: true,
+        {
+          fps: 10,
 
-        showTorchButtonIfSupported: true
+          qrbox: function(
+            viewfinderWidth,
+            viewfinderHeight
+          ) {
 
-      },
+            const minEdge =
+              Math.min(
+                viewfinderWidth,
+                viewfinderHeight
+              );
 
-      false
+            const size =
+              Math.min(
+                280,
+                Math.max(
+                  180,
+                  minEdge * 0.65
+                )
+              );
 
-    );
+            return {
+              width: size,
+              height: size
+            };
+
+          },
+
+          aspectRatio: 1.0
+        },
+
+        onScanSuccess,
+
+        onScanError
+
+      )
+
+      .then(function() {
+
+        scanning = true;
+
+        updateStatus(
+          "Scanner is active",
+          true
+        );
+
+      })
+
+      .catch(function(error) {
+
+        console.error(
+          "Camera start failed:",
+          error
+        );
+
+        updateStatus(
+          "Camera access failed",
+          false
+        );
 
 
-    scanner.render(
-      onScanSuccess,
-      onScanError
-    );
+        showResult(
+          "error",
+          "⚠️",
+          "Camera Access Required",
+          "Please allow camera access and try again."
+        );
 
 
-    scanning = true;
+        resetStartScreen();
+
+      });
 
   }
 
@@ -686,49 +1285,47 @@
 
   function onScanSuccess(decodedText) {
 
-    if (!scanning) {
+    if (!scanning || processing) {
       return;
     }
 
 
+    processing = true;
     scanning = false;
 
 
-    const token = extractToken(decodedText);
+    const token =
+      extractToken(decodedText);
 
 
     if (!token) {
 
       showResult(
-
         "error",
-
         "❌",
-
         "Invalid QR Code",
-
         "This is not a valid Orientation QR code."
-
       );
 
 
-      restartScanner();
+      finishScan();
 
       return;
 
     }
 
 
+    updateStatus(
+      "Checking attendance...",
+      false
+    );
+
+
     showResult(
-
       "warning",
-
       "⏳",
-
       "Checking Attendance",
-
-      "Please wait..."
-
+      "Please wait while we verify the student."
     );
 
 
@@ -738,14 +1335,14 @@
 
 
   /*
-   * IGNORE NORMAL SCANNER ERRORS
+   * IGNORE SCANNER ERRORS
    */
 
   function onScanError(errorMessage) {
 
-    // QR scanner continuously reports
-    // "QR code not found" while searching.
-    // We intentionally ignore these messages.
+    // Normal scanning produces many
+    // "QR code not found" messages.
+    // They are intentionally ignored.
 
   }
 
@@ -758,7 +1355,8 @@
 
     try {
 
-      const url = new URL(qrText);
+      const url =
+        new URL(qrText);
 
       return url.searchParams.get("token");
 
@@ -783,83 +1381,87 @@
 
 
   /*
-   * SEND ATTENDANCE TO BACKEND
+   * SEND ATTENDANCE
    */
-function sendAttendance(token) {
 
-  fetch(BACKEND_URL, {
-    method: "POST",
+  function sendAttendance(token) {
 
-    headers: {
-      "Content-Type": "application/json"
-    },
+    fetch(
+      BACKEND_URL,
+      {
+        method: "POST",
 
-    body: JSON.stringify({
-      token: token
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          token: token
+        })
+
+      }
+    )
+
+    .then(function(response) {
+
+      if (!response.ok) {
+
+        throw new Error(
+          "HTTP " + response.status
+        );
+
+      }
+
+      return response.json();
+
     })
 
-  })
+    .then(function(result) {
 
-  .then(function(response) {
+      handleAttendanceResult(result);
 
-    if (!response.ok) {
-      throw new Error(
-        "HTTP " + response.status
+    })
+
+    .catch(function(error) {
+
+      console.error(
+        "Attendance request failed:",
+        error
       );
-    }
-
-    return response.json();
-
-  })
-
-  .then(function(result) {
-
-    handleAttendanceResult(result);
-
-  })
-
-  .catch(function(error) {
-
-    console.error(
-      "Attendance request failed:",
-      error
-    );
-
-    showResult(
-      "error",
-      "⚠️",
-      "Connection Error",
-      "Could not connect to the attendance system. Please try again."
-    );
-
-    restartScanner();
-
-  });
-
-}
 
 
-/*
- * HANDLE BACKEND RESULT
- */
+      showResult(
+        "error",
+        "⚠️",
+        "Connection Error",
+        "Could not connect to the attendance system. Please try again."
+      );
+
+
+      finishScan();
+
+    });
+
+  }
+
+
+  /*
+   * HANDLE RESULT
+   */
 
   function handleAttendanceResult(result) {
 
     if (!result) {
 
       showResult(
-
         "error",
-
         "⚠️",
-
         "Unexpected Error",
-
         "The attendance system returned no response."
-
       );
 
-      restartScanner();
+
+      finishScan();
 
       return;
 
@@ -869,95 +1471,97 @@ function sendAttendance(token) {
     if (result.success) {
 
       showResult(
-
         "success",
-
         "✓",
-
         "Attendance Recorded",
 
         `
-          <h3>${escapeHtml(result.name)}</h3>
+          <h3>
+            ${escapeHtml(result.name)}
+          </h3>
 
-          <p>
-            Student ID:
-            <strong>
-              ${escapeHtml(String(result.id))}
-            </strong>
-          </p>
+          <div class="result-details">
 
-          <p>
-            Major:
-            <strong>
-              ${escapeHtml(String(result.major))}
-            </strong>
-          </p>
+            <p>
+              Student ID:
+              <strong>
+                ${escapeHtml(String(result.id))}
+              </strong>
+            </p>
 
-          <p>
-            Time:
-            <strong>
-              ${escapeHtml(result.time)}
-            </strong>
-          </p>
+            <p>
+              Major:
+              <strong>
+                ${escapeHtml(String(result.major))}
+              </strong>
+            </p>
+
+            <p>
+              Time:
+              <strong>
+                ${escapeHtml(result.time)}
+              </strong>
+            </p>
+
+          </div>
         `
-
       );
 
     }
+
 
     else if (result.alreadyAttended) {
 
       showResult(
-
         "warning",
-
         "✓",
-
         "Already Checked In",
 
         `
-          <h3>${escapeHtml(result.name)}</h3>
+          <h3>
+            ${escapeHtml(result.name)}
+          </h3>
 
-          <p>
-            Student ID:
-            <strong>
-              ${escapeHtml(String(result.id))}
-            </strong>
-          </p>
+          <div class="result-details">
 
-          <p>
-            First attendance:
-            <strong>
-              ${escapeHtml(result.time)}
-            </strong>
-          </p>
+            <p>
+              Student ID:
+              <strong>
+                ${escapeHtml(String(result.id))}
+              </strong>
+            </p>
+
+            <p>
+              First attendance:
+              <strong>
+                ${escapeHtml(result.time)}
+              </strong>
+            </p>
+
+          </div>
         `
-
       );
 
     }
 
+
     else {
 
       showResult(
-
         "error",
-
         "❌",
-
         "Invalid QR Code",
 
         escapeHtml(
           result.message ||
           "This QR code is not registered."
         )
-
       );
 
     }
 
 
-    restartScanner();
+    finishScan();
 
   }
 
@@ -997,28 +1601,102 @@ function sendAttendance(token) {
     `;
 
 
-    result.style.display = "block";
+    result.style.display = "flex";
 
   }
 
 
   /*
-   * RESTART
+   * FINISH SCAN
+   *
+   * Keep scanner open.
+   * Organizer doesn't need to press
+   * Start Scanner after every student.
    */
 
-  function restartScanner() {
+  function finishScan() {
 
-    setTimeout(() => {
+    setTimeout(function() {
 
-      const result =
-        document.getElementById("result");
-
-      result.style.display = "none";
-
-
+      processing = false;
       scanning = true;
 
-    }, 3000);
+      updateStatus(
+        "Ready for next student",
+        true
+      );
+
+    }, 2500);
+
+  }
+
+
+  /*
+   * STATUS
+   */
+
+  function updateStatus(
+    text,
+    active
+  ) {
+
+    const statusText =
+      document.getElementById("statusText");
+
+    const dot =
+      document.querySelector(".status-dot");
+
+
+    statusText.textContent = text;
+
+
+    if (active) {
+
+      dot.style.background =
+        "var(--success)";
+
+      dot.style.animation =
+        "pulse 1.5s infinite";
+
+    }
+
+    else {
+
+      dot.style.background =
+        "var(--warning)";
+
+      dot.style.animation =
+        "none";
+
+    }
+
+  }
+
+
+  /*
+   * RESET START SCREEN
+   */
+
+  function resetStartScreen() {
+
+    document.getElementById(
+      "startSection"
+    ).style.display = "flex";
+
+
+    document.getElementById(
+      "scannerOverlay"
+    ).style.display = "none";
+
+
+    updateStatus(
+      "Scanner is ready",
+      true
+    );
+
+
+    scanning = false;
+    processing = false;
 
   }
 
@@ -1031,11 +1709,30 @@ function sendAttendance(token) {
 
     return String(value)
 
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+
+      .replace(
+        /</g,
+        "&lt;"
+      )
+
+      .replace(
+        />/g,
+        "&gt;"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+
+      .replace(
+        /'/g,
+        "&#039;"
+      );
 
   }
 
