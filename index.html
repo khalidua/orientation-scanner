@@ -786,43 +786,27 @@
    * SEND ATTENDANCE TO BACKEND
    */
 
-function sendAttendance(token) {
-  const callbackName =
-    "attendanceCallback_" + Date.now();
+async function sendAttendance(token) {
+  showResult("warning", "⏳", "Checking Attendance", "Please wait...");
 
-  window[callbackName] = function(result) {
+  try {
+    const response = await fetch(
+      BACKEND_URL + "?action=scan&token=" + encodeURIComponent(token),
+      { credentials: "omit" }
+    );
+    const result = await response.json();
     handleAttendanceResult(result);
-
-    delete window[callbackName];
-    script.remove();
-  };
-
-  const url =
-    BACKEND_URL +
-    "?action=scan&token=" +
-    encodeURIComponent(token) +
-    "&callback=" +
-    callbackName;
-
-  const script = document.createElement("script");
-
-  script.src = url;
-
-  script.onerror = function() {
-    console.error("JSONP request failed");
-
+  } catch (error) {
+    console.error("Fetch failed:", error);
     showResult(
       "error",
       "⚠️",
       "Connection Error",
       "Could not connect to the attendance system. Please try again."
     );
-
-    delete window[callbackName];
-    script.remove();
-
     restartScanner();
-  };
+  }
+}
 
   document.body.appendChild(script);
 }
