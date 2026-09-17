@@ -787,41 +787,44 @@
    */
 
 function sendAttendance(token) {
+  const callbackName =
+    "attendanceCallback_" + Date.now();
+
+  window[callbackName] = function(result) {
+    handleAttendanceResult(result);
+
+    delete window[callbackName];
+    script.remove();
+  };
 
   const url =
     BACKEND_URL +
     "?action=scan&token=" +
-    encodeURIComponent(token);
+    encodeURIComponent(token) +
+    "&callback=" +
+    callbackName;
 
-  fetch(url)
-    .then(response => {
+  const script = document.createElement("script");
 
-      if (!response.ok) {
-        throw new Error(
-          "Server returned " + response.status
-        );
-      }
+  script.src = url;
 
-      return response.json();
-    })
-    .then(result => {
+  script.onerror = function() {
+    console.error("JSONP request failed");
 
-      handleAttendanceResult(result);
+    showResult(
+      "error",
+      "⚠️",
+      "Connection Error",
+      "Could not connect to the attendance system. Please try again."
+    );
 
-    })
-    .catch(error => {
+    delete window[callbackName];
+    script.remove();
 
-      console.error(error);
+    restartScanner();
+  };
 
-      showResult(
-        "error",
-        "⚠️",
-        "Connection Error",
-        "Could not connect to the attendance system. Please try again."
-      );
-
-      restartScanner();
-    });
+  document.body.appendChild(script);
 }
   /*
    * HANDLE BACKEND RESULT
