@@ -418,7 +418,144 @@
     }
 
 
+    
     /* =========================================================
+       SCANNER MODE TOGGLE
+       ========================================================= */
+
+    .scanner-mode {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      margin: 0 2px 10px;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+    }
+
+    .mode-button {
+      min-height: 38px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+
+    .mode-button.active {
+      background: var(--card);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(15,23,42,0.08);
+    }
+
+    .manual-panel {
+      width: 100%;
+      min-height: 270px;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px;
+      background: var(--scanner-bg);
+      border-radius: 12px;
+      color: white;
+    }
+
+    .manual-content {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .manual-icon {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 15px;
+      font-size: 24px;
+    }
+
+    .manual-content h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .manual-content p {
+      margin: 0 0 18px;
+      color: #cbd5e1;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .manual-form {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .manual-input {
+      flex: 1;
+      min-width: 0;
+      height: 46px;
+      padding: 0 13px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 11px;
+      outline: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .manual-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .manual-input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96,165,250,0.15);
+    }
+
+    .manual-button {
+      min-height: 46px;
+      padding: 0 16px;
+      border: none;
+      border-radius: 11px;
+      background: var(--primary);
+      color: white;
+      font-size: 12px;
+      font-weight: 750;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .manual-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 380px) {
+      .manual-form {
+        flex-direction: column;
+      }
+
+      .manual-button {
+        width: 100%;
+      }
+    }
+
+/* =========================================================
        CAMERA CONTAINER
     ========================================================= */
 
@@ -1409,6 +1546,35 @@
         </div>
 
 
+        <!-- SCANNER MODE -->
+
+        <div class="scanner-mode" role="tablist" aria-label="Attendance method">
+
+          <button
+            type="button"
+            id="cameraModeButton"
+            class="mode-button active"
+            onclick="setScannerMode('camera')"
+            role="tab"
+            aria-selected="true"
+          >
+            📷 Camera
+          </button>
+
+          <button
+            type="button"
+            id="manualModeButton"
+            class="mode-button"
+            onclick="setScannerMode('manual')"
+            role="tab"
+            aria-selected="false"
+          >
+            ⌨️ Manual ID
+          </button>
+
+        </div>
+
+
         <div
           class="scanner-container"
           id="scannerContainer"
@@ -1467,6 +1633,58 @@
 
           </div>
 
+
+        </div>
+
+
+        <!-- MANUAL CHECK-IN -->
+
+        <div
+          class="manual-panel"
+          id="manualPanel"
+        >
+
+          <div class="manual-content">
+
+            <div class="manual-icon">
+              ⌨️
+            </div>
+
+            <h2>
+              Manual Check-in
+            </h2>
+
+            <p>
+              Enter the student's ID if the QR code cannot be scanned.
+            </p>
+
+            <form
+              class="manual-form"
+              id="manualForm"
+              onsubmit="submitManualAttendance(event)"
+            >
+
+              <input
+                type="text"
+                id="studentIdInput"
+                class="manual-input"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="Student ID"
+                aria-label="Student ID"
+              >
+
+              <button
+                type="submit"
+                id="manualButton"
+                class="manual-button"
+              >
+                Mark Attended
+              </button>
+
+            </form>
+
+          </div>
 
         </div>
 
@@ -1591,10 +1809,224 @@
 
   let restartTimer = null;
 
+  let scannerMode = "camera";
+
+  let manualProcessing = false;
+
 
   /* =========================================================
      START SCANNER
   ========================================================= */
+
+
+  /* =========================================================
+     SCANNER MODE
+     ========================================================= */
+
+  async function setScannerMode(mode) {
+
+    if (mode === scannerMode && mode === "camera") {
+      return;
+    }
+
+    if (mode === "manual") {
+
+      if (scanner && scanning) {
+
+        try {
+          await scanner.stop();
+        } catch (error) {
+          console.error("Could not stop scanner:", error);
+        }
+
+        scanning = false;
+        processing = false;
+      }
+
+      if (restartTimer) {
+        clearTimeout(restartTimer);
+        restartTimer = null;
+      }
+
+      scannerMode = "manual";
+
+      document.getElementById("scannerContainer").style.display = "none";
+      document.getElementById("manualPanel").style.display = "flex";
+
+      document.getElementById("cameraModeButton").classList.remove("active");
+      document.getElementById("manualModeButton").classList.add("active");
+
+      document.getElementById("cameraModeButton").setAttribute("aria-selected", "false");
+      document.getElementById("manualModeButton").setAttribute("aria-selected", "true");
+
+      document.getElementById("cameraLabel").textContent = "Manual mode";
+
+      updateStatus("Ready for manual check-in", "success");
+
+      setTimeout(function() {
+        document.getElementById("studentIdInput").focus();
+      }, 50);
+
+      return;
+    }
+
+    scannerMode = "camera";
+
+    document.getElementById("manualPanel").style.display = "none";
+    document.getElementById("scannerContainer").style.display = "flex";
+
+    document.getElementById("cameraModeButton").classList.add("active");
+    document.getElementById("manualModeButton").classList.remove("active");
+
+    document.getElementById("cameraModeButton").setAttribute("aria-selected", "true");
+    document.getElementById("manualModeButton").setAttribute("aria-selected", "false");
+
+    document.getElementById("cameraLabel").textContent = "Camera ready";
+
+    updateStatus("Scanner is ready", "success");
+
+    if (!scanning && !processing) {
+      startScanner();
+    }
+  }
+
+
+  /* =========================================================
+     MANUAL ATTENDANCE
+     ========================================================= */
+
+  function submitManualAttendance(event) {
+
+    event.preventDefault();
+
+    if (manualProcessing) {
+      return;
+    }
+
+    const input = document.getElementById("studentIdInput");
+    const button = document.getElementById("manualButton");
+
+    const studentId = input.value.trim();
+
+    if (!studentId) {
+
+      showResult(
+        "error",
+        "❌",
+        "Student ID Required",
+        `
+          <p>
+            Enter the student's ID and try again.
+          </p>
+        `
+      );
+
+      updateStatus("Student ID required", "error");
+      input.focus();
+      return;
+    }
+
+    manualProcessing = true;
+    button.disabled = true;
+    button.textContent = "Checking...";
+
+    updateStatus("Checking attendance...", "warning");
+
+    showResult(
+      "warning",
+      "⏳",
+      "Checking Attendance",
+      `
+        <p>
+          Verifying student ID...
+        </p>
+      `
+    );
+
+    fetch(
+      BACKEND_URL,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          action: "manual",
+          studentId: studentId
+        })
+      }
+    )
+
+    .then(function(response) {
+
+      if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+      }
+
+      return response.json();
+
+    })
+
+    .then(function(result) {
+
+      handleAttendanceResult(result);
+
+      if (result && (result.success || result.alreadyAttended)) {
+        input.value = "";
+      }
+
+    })
+
+    .catch(function(error) {
+
+      console.error(
+        "Manual attendance request failed:",
+        error
+      );
+
+      showResult(
+        "error",
+        "⚠️",
+        "Connection Error",
+        `
+          <p>
+            Could not connect to the attendance system.
+          </p>
+
+          <p>
+            Please try again.
+          </p>
+        `
+      );
+
+      updateStatus(
+        "Connection error",
+        "error"
+      );
+
+    })
+
+    .finally(function() {
+
+      manualProcessing = false;
+      button.disabled = false;
+      button.textContent = "Mark Attended";
+
+      if (scannerMode === "manual") {
+        setTimeout(function() {
+          input.focus();
+        }, 50);
+      }
+
+    });
+  }
+
+
+  /* =========================================================
+     START SCANNER
+     ========================================================= */
 
 async function startScanner() {
 
@@ -2551,6 +2983,25 @@ async function startScanner() {
 
   function finishScan() {
 
+    /*
+     * Manual mode does not use the camera restart cycle.
+     */
+
+    if (scannerMode === "manual") {
+
+      processing = false;
+
+      setTimeout(function() {
+
+        if (!manualProcessing) {
+          document.getElementById("studentIdInput").focus();
+        }
+
+      }, 50);
+
+      return;
+    }
+
 
     /*
      * Cancel previous timer if one exists.
@@ -2695,7 +3146,7 @@ async function startScanner() {
     "beforeunload",
     function() {
 
-      if (scanner) {
+      if (scanner && scanning) {
 
         scanner.stop()
           .catch(function() {});
