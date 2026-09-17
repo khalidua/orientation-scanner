@@ -787,40 +787,42 @@
    */
 
 function sendAttendance(token) {
-  fetch(BACKEND_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify({
-      token: token
+
+  const url =
+    BACKEND_URL +
+    "?action=scan&token=" +
+    encodeURIComponent(token);
+
+  fetch(url)
+    .then(response => {
+
+      if (!response.ok) {
+        throw new Error(
+          "Server returned " + response.status
+        );
+      }
+
+      return response.json();
     })
-  })
-  .then(() => {
-    showResult(
-      "success",
-      "✓",
-      "Attendance Recorded",
-      "Student attendance has been recorded successfully."
-    );
+    .then(result => {
 
-    restartScanner();
-  })
-  .catch(error => {
-    console.error(error);
+      handleAttendanceResult(result);
 
-    showResult(
-      "error",
-      "⚠️",
-      "Connection Error",
-      "Could not connect to the attendance system. Please try again."
-    );
+    })
+    .catch(error => {
 
-    restartScanner();
-  });
+      console.error(error);
+
+      showResult(
+        "error",
+        "⚠️",
+        "Connection Error",
+        "Could not connect to the attendance system. Please try again."
+      );
+
+      restartScanner();
+    });
 }
-
   /*
    * HANDLE BACKEND RESULT
    */
