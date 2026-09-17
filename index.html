@@ -607,7 +607,7 @@
    */
 
   const BACKEND_URL =
-    "https://script.google.com/macros/s/AKfycbwXdDw21nDf0DvRaGw9WeMnMklZymyQAtqolAr1OVdy5eR2GeywByWS2Ye9EwRjbP4ZVA/exec";
+    "https://orientation-attendance.s-khalid-elrahman.workers.dev";
 
 
   let scanner = null;
@@ -786,20 +786,44 @@
    * SEND ATTENDANCE TO BACKEND
    */
 function sendAttendance(token) {
-  const callbackName =
-    "attendanceCallback_" + Date.now();
 
-  const script = document.createElement("script");
+  fetch(BACKEND_URL, {
+    method: "POST",
 
-  window[callbackName] = function(result) {
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      token: token
+    })
+
+  })
+
+  .then(function(response) {
+
+    if (!response.ok) {
+      throw new Error(
+        "HTTP " + response.status
+      );
+    }
+
+    return response.json();
+
+  })
+
+  .then(function(result) {
+
     handleAttendanceResult(result);
 
-    delete window[callbackName];
-    script.remove();
-  };
+  })
 
-  script.onerror = function() {
-    console.error("JSONP request failed");
+  .catch(function(error) {
+
+    console.error(
+      "Attendance request failed:",
+      error
+    );
 
     showResult(
       "error",
@@ -808,22 +832,10 @@ function sendAttendance(token) {
       "Could not connect to the attendance system. Please try again."
     );
 
-    delete window[callbackName];
-    script.remove();
-
     restartScanner();
-  };
 
-  const url =
-    BACKEND_URL +
-    "?action=scan&token=" +
-    encodeURIComponent(token) +
-    "&callback=" +
-    callbackName;
+  });
 
-  script.src = url;
-
-  document.body.appendChild(script);
 }
 
 
