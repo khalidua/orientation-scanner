@@ -787,41 +787,27 @@
    */
 
 function sendAttendance(token) {
-
   fetch(BACKEND_URL, {
-
     method: "POST",
-
+    mode: "no-cors",
     headers: {
       "Content-Type": "text/plain;charset=utf-8"
     },
-
     body: JSON.stringify({
       token: token
     })
-
   })
+  .then(() => {
+    showResult(
+      "success",
+      "✓",
+      "Attendance Recorded",
+      "Student attendance has been recorded successfully."
+    );
 
-  .then(response => {
-
-    if (!response.ok) {
-      throw new Error(
-        "Server returned " + response.status
-      );
-    }
-
-    return response.json();
-
+    restartScanner();
   })
-
-  .then(result => {
-
-    handleAttendanceResult(result);
-
-  })
-
   .catch(error => {
-
     console.error(error);
 
     showResult(
@@ -832,10 +818,8 @@ function sendAttendance(token) {
     );
 
     restartScanner();
-
   });
 }
-
 
   /*
    * HANDLE BACKEND RESULT
