@@ -786,65 +786,47 @@
    * SEND ATTENDANCE TO BACKEND
    */
 
-  function sendAttendance(token) {
+function sendAttendance(token) {
 
-    fetch(BACKEND_URL, {
+  const url =
+    BACKEND_URL +
+    "?scan=1&token=" +
+    encodeURIComponent(token);
 
-      method: "POST",
-
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-
-      body: JSON.stringify({
-        token: token
-      })
-
-    })
-
+  fetch(url, {
+    method: "GET"
+  })
     .then(response => {
 
       if (!response.ok) {
-
         throw new Error(
           "Server returned " + response.status
         );
-
       }
 
       return response.json();
 
     })
-
     .then(result => {
 
       handleAttendanceResult(result);
 
     })
-
     .catch(error => {
 
       console.error(error);
 
-
       showResult(
-
         "error",
-
         "⚠️",
-
         "Connection Error",
-
         "Could not connect to the attendance system. Please try again."
-
       );
-
 
       restartScanner();
 
     });
-
-  }
+}
 
 
   /*
