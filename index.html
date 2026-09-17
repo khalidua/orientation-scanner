@@ -1596,222 +1596,359 @@
      START SCANNER
   ========================================================= */
 
-  async function startScanner() {
+async function startScanner() {
 
+  if (scanning || processing) {
+    return;
+  }
 
-    if (scanning || processing) {
-      return;
+  const startScreen =
+    document.getElementById("startScreen");
+
+  const scanOverlay =
+    document.getElementById("scanOverlay");
+
+  const startButton =
+    document.getElementById("startButton");
+
+  startButton.disabled = true;
+  startButton.textContent = "Starting...";
+
+  updateStatus(
+    "Requesting camera...",
+    "warning"
+  );
+
+  try {
+
+    /*
+     * Create scanner instance once.
+     */
+    if (!scanner) {
+      scanner = new Html5Qrcode("reader");
     }
 
 
-    const startScreen =
-      document.getElementById("startScreen");
+    /*
+     * STEP 1
+     *
+     * Ask for camera permission first.
+     *
+     * This is important because camera labels are
+     * often hidden until permission has been granted.
+     */
 
-
-    const scanOverlay =
-      document.getElementById("scanOverlay");
-
-
-    const startButton =
-      document.getElementById("startButton");
-
-
-    startButton.disabled = true;
-
-    startButton.textContent =
-      "Starting...";
-
-
-    updateStatus(
-      "Starting camera...",
-      "warning"
-    );
-
+    let temporaryStream = null;
 
     try {
 
-
-      /*
-       * Create the scanner only once.
-       */
-
-      if (!scanner) {
-
-        scanner =
-          new Html5Qrcode("reader");
-
-      }
-
-
-      /*
-       * IMPORTANT
-       *
-       * "environment" tells the browser to
-       * prefer the rear camera on phones.
-       *
-       * Unlike:
-       *
-       * facingMode: { exact: "environment" }
-       *
-       * this does NOT force a rear camera.
-       *
-       * Therefore:
-       *
-       * Phone -> prefers back camera
-       *
-       * PC -> uses available webcam
-       */
-
-      await scanner.start(
-
-        {
-          facingMode: "environment"
-        },
-
-
-        {
-
-          fps: 10,
-
-
-          qrbox: function(
-            viewfinderWidth,
-            viewfinderHeight
-          ) {
-
-            const minEdge =
-              Math.min(
-                viewfinderWidth,
-                viewfinderHeight
-              );
-
-
-            const size =
-              Math.min(
-                260,
-                Math.max(
-                  170,
-                  minEdge * 0.65
-                )
-              );
-
-
-            return {
-              width: size,
-              height: size
-            };
-
-          },
-
-
-          aspectRatio: 1.0,
-
-
-          disableFlip: false
-
-        },
-
-
-        onScanSuccess,
-
-        onScanError
-
-      );
-
-
-      /*
-       * Camera successfully started.
-       */
-
-      startScreen.style.display =
-        "none";
-
-
-      scanOverlay.style.display =
-        "flex";
-
-
-      scanning = true;
-
-      processing = false;
-
-
-      startButton.disabled = false;
-
-      startButton.textContent =
-        "Start Scanner";
-
-
-      updateStatus(
-        "Ready for next student",
-        "success"
-      );
-
-
-      document.getElementById(
-        "cameraLabel"
-      ).textContent =
-        "Camera active";
-
+      temporaryStream =
+        await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false
+        });
 
     }
 
-
-    catch (error) {
-
+    catch (cameraError) {
 
       console.error(
-        "Camera start failed:",
-        error
+        "getUserMedia failed:",
+        cameraError
       );
 
+      throw cameraError;
 
-      scanning = false;
-
-      processing = false;
-
-
-      startButton.disabled = false;
-
-      startButton.textContent =
-        "Try Again";
+    }
 
 
-      updateStatus(
-        "Camera could not start",
-        "error"
-      );
+    /*
+     * We only needed the temporary stream to request
+     * permission and expose camera information.
+     *
+     * Stop it immediately.
+     */
+
+    temporaryStream
+      .getTracks()
+      .forEach(function(track) {
+        track.stop();
+      });
 
 
-      document.getElementById(
-        "cameraLabel"
-      ).textContent =
-        "Camera unavailable";
+    /*
+     * STEP 2
+     *
+     * Get all available cameras.
+     */
+
+    const cameras =
+      await Html5Qrcode.getCameras();
 
 
-      showResult(
+    if (!cameras || cameras.length === 0) {
 
-        "error",
-
-        "⚠️",
-
-        "Camera Access Required",
-
-        `
-          <p>
-            The camera could not be started.
-          </p>
-
-          <p>
-            Please allow camera access and try again.
-          </p>
-        `
-
+      throw new Error(
+        "No camera was found on this device."
       );
 
     }
 
+
+    console.log(
+      "Available cameras:",
+      cameras
+    );
+
+
+    /*
+     * STEP 3
+     *
+     * Choose the camera.
+     *
+     * Phone:
+     * Prefer camera whose label contains
+     * back / rear / environment.
+     *
+     * PC:
+     * Use the first available webcam.
+     */
+
+    let selectedCamera =
+      cameras[0];
+
+
+    const rearCamera =
+      cameras.find(function(camera) {
+
+        const label =
+          (camera.label || "").toLowerCase();
+
+        return (
+          label.includes("back") ||
+          label.includes("rear") ||
+          label.includes("environment")
+        );
+
+      });
+
+
+    if (rearCamera) {
+
+      selectedCamera =
+        rearCamera;
+
+    }
+
+
+    console.log(
+      "Selected camera:",
+      selectedCamera.label
+    );
+
+
+    /*
+     * STEP 4
+     *
+     * Start scanner using the selected camera.
+     */
+
+    await scanner.start(
+
+      selectedCamera.id,
+
+      {
+
+        fps: 10,
+
+        qrbox: function(
+          viewfinderWidth,
+          viewfinderHeight
+        ) {
+
+          const minEdge =
+            Math.min(
+              viewfinderWidth,
+              viewfinderHeight
+            );
+
+
+          const size =
+            Math.min(
+              260,
+              Math.max(
+                170,
+                minEdge * 0.65
+              )
+            );
+
+
+          return {
+            width: size,
+            height: size
+          };
+
+        },
+
+        aspectRatio: 1.0,
+
+        disableFlip: false
+
+      },
+
+      onScanSuccess,
+
+      onScanError
+
+    );
+
+
+    /*
+     * Scanner started successfully.
+     */
+
+    startScreen.style.display =
+      "none";
+
+    scanOverlay.style.display =
+      "flex";
+
+
+    scanning = true;
+    processing = false;
+
+
+    startButton.disabled = false;
+
+    startButton.textContent =
+      "Start Scanner";
+
+
+    updateStatus(
+      "Ready for next student",
+      "success"
+    );
+
+
+    document.getElementById(
+      "cameraLabel"
+    ).textContent =
+      "Camera active";
+
+
   }
+
+  catch (error) {
+
+    console.error(
+      "Camera initialization failed:",
+      error
+    );
+
+
+    scanning = false;
+    processing = false;
+
+
+    startButton.disabled = false;
+
+    startButton.textContent =
+      "Try Again";
+
+
+    updateStatus(
+      "Camera could not start",
+      "error"
+    );
+
+
+    document.getElementById(
+      "cameraLabel"
+    ).textContent =
+      "Camera unavailable";
+
+
+    let message =
+      "Please allow camera access and try again.";
+
+
+    /*
+     * Give a more useful message for common
+     * browser errors.
+     */
+
+    if (
+      error &&
+      error.name === "NotAllowedError"
+    ) {
+
+      message =
+        "Camera permission was denied. Allow camera access in your browser settings, then try again.";
+
+    }
+
+    else if (
+      error &&
+      error.name === "NotFoundError"
+    ) {
+
+      message =
+        "No camera was found on this device.";
+
+    }
+
+    else if (
+      error &&
+      error.name === "NotReadableError"
+    ) {
+
+      message =
+        "The camera is already being used by another application.";
+
+    }
+
+    else if (
+      error &&
+      error.name === "SecurityError"
+    ) {
+
+      message =
+        "The browser blocked camera access. Make sure you are opening the site over HTTPS.";
+
+    }
+
+    else if (
+      error &&
+      error.message
+    ) {
+
+      console.error(
+        "Camera error details:",
+        error.message
+      );
+
+    }
+
+
+    showResult(
+
+      "error",
+
+      "⚠️",
+
+      "Camera Access Required",
+
+      `
+        <p>
+          ${escapeHtml(message)}
+        </p>
+      `
+
+    );
+
+  }
+
+}
 
 
   /* =========================================================
