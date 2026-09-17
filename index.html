@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>Orientation Attendance</title>
+
+  <script
+    src="https://unpkg.com/html5-qrcode"
+    type="text/javascript">
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --background: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
+      --warning: #d97706;
+      --warning-bg: #fffbeb;
+      --border: #e2e8f0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+      background: var(--background);
+      color: var(--text);
+    }
+
+    .app {
+      min-height: 100vh;
+      min-height: 100dvh;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding:
+        max(18px, env(safe-area-inset-top))
+        20px
+        16px;
+
+      text-align: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #eff6ff;
+      border-radius: 12px;
+
+      font-size: 22px;
+    }
+
+    .brand-text {
+      text-align: left;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      margin: 3px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* MAIN */
+
+    .main {
+      width: 100%;
+      max-width: 600px;
+
+      margin: 0 auto;
+      padding: 20px;
+
+      flex: 1;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .intro {
+      text-align: center;
+      margin: 4px 0 18px;
+    }
+
+    .intro h1 {
+      margin: 0 0 6px;
+
+      font-size: clamp(24px, 6vw, 32px);
+      line-height: 1.2;
+      font-weight: 750;
+    }
+
+    .intro p {
+      margin: 0;
+
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* SCANNER CARD */
+
+    .scanner-card {
+      background: var(--card);
+
+      border: 1px solid var(--border);
+      border-radius: 20px;
+
+      padding: 16px;
+
+      box-shadow:
+        0 4px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .scanner-container {
+      position: relative;
+
+      width: 100%;
+
+      overflow: hidden;
+
+      border-radius: 16px;
+      background: #0f172a;
+
+      min-height: 300px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #reader {
+      width: 100%;
+    }
+
+    /* Make html5-qrcode responsive */
+
+    #reader video {
+      width: 100% !important;
+      height: auto !important;
+      border-radius: 16px;
+      object-fit: cover;
+    }
+
+    #reader img {
+      max-width: 100%;
+    }
+
+    #reader__scan_region {
+      min-height: 280px;
+    }
+
+    /* START BUTTON */
+
+    .start-section {
+      text-align: center;
+      padding: 45px 20px;
+    }
+
+    .camera-icon {
+      width: 72px;
+      height: 72px;
+
+      margin: 0 auto 18px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #eff6ff;
+      border-radius: 50%;
+
+      font-size: 32px;
+    }
+
+    .start-section h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .start-section p {
+      margin: 0 0 22px;
+
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .start-button {
+      width: 100%;
+      max-width: 320px;
+
+      border: none;
+      border-radius: 12px;
+
+      padding: 15px 20px;
+
+      background: var(--primary);
+      color: white;
+
+      font-size: 16px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s,
+        transform 0.1s;
+    }
+
+    .start-button:hover {
+      background: var(--primary-dark);
+    }
+
+    .start-button:active {
+      transform: scale(0.98);
+    }
+
+    /* STATUS */
+
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 8px;
+
+      margin-top: 14px;
+
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+
+      border-radius: 50%;
+      background: var(--success);
+
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.35;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* RESULT */
+
+    #result {
+      display: none;
+
+      margin-top: 16px;
+
+      padding: 22px;
+
+      border-radius: 16px;
+
+      text-align: center;
+    }
+
+    #result.success {
+      background: var(--success-bg);
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    #result.error {
+      background: var(--error-bg);
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    #result.warning {
+      background: var(--warning-bg);
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+
+    .result-icon {
+      width: 58px;
+      height: 58px;
+
+      margin: 0 auto 12px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: rgba(255,255,255,0.7);
+
+      font-size: 28px;
+    }
+
+    #result h2 {
+      margin: 0 0 8px;
+
+      font-size: 20px;
+    }
+
+    #result h3 {
+      margin: 0 0 14px;
+
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    #result p {
+      margin: 6px 0;
+
+      font-size: 14px;
+    }
+
+    /* FOOTER */
+
+    .footer {
+      padding:
+        14px
+        20px
+        max(14px, env(safe-area-inset-bottom));
+
+      text-align: center;
+
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 480px) {
+
+      .main {
+        padding: 14px;
+      }
+
+      .scanner-card {
+        padding: 10px;
+
+        border-radius: 18px;
+      }
+
+      .scanner-container {
+        border-radius: 14px;
+        min-height: 280px;
+      }
+
+      #reader__scan_region {
+        min-height: 260px;
+      }
+
+      .intro {
+        margin-bottom: 14px;
+      }
+
+      .intro h1 {
+        font-size: 25px;
+      }
+
+      .intro p {
+        font-size: 14px;
+      }
+    }
+
+    /* LANDSCAPE PHONES */
+
+    @media (orientation: landscape) and (max-height: 600px) {
+
+      .header {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .main {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .intro {
+        margin-bottom: 10px;
+      }
+
+      .scanner-container {
+        min-height: 220px;
+      }
+
+      #reader__scan_region {
+        min-height: 200px;
+      }
+
+      .footer {
+        display: none;
+      }
+    }
+
+    /* TABLETS / DESKTOP */
+
+    @media (min-width: 768px) {
+
+      .main {
+        padding-top: 35px;
+      }
+
+      .scanner-card {
+        padding: 20px;
+      }
+
+      .scanner-container {
+        min-height: 400px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+
+  <header class="header">
+
+    <div class="brand">
+
+      <div class="brand-icon">
+        🎓
+      </div>
+
+      <div class="brand-text">
+
+        <p class="brand-title">
+          Orientation Attendance
+        </p>
+
+        <p class="brand-subtitle">
+          Organizer Scanner
+        </p>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main class="main">
+
+    <div class="intro">
+
+      <h1>
+        Scan Student QR
+      </h1>
+
+      <p>
+        Scan the student's QR code to record attendance.
+      </p>
+
+    </div>
+
+
+    <!-- SCANNER -->
+
+    <section class="scanner-card">
+
+      <div
+        id="startSection"
+        class="start-section"
+      >
+
+        <div class="camera-icon">
+          📷
+        </div>
+
+        <h2>
+          Ready to scan
+        </h2>
+
+        <p>
+          Tap the button below to allow camera access
+          and start scanning.
+        </p>
+
+        <button
+          id="startButton"
+          class="start-button"
+          onclick="startScanner()"
+        >
+          Start Scanner
+        </button>
+
+      </div>
+
+
+      <div
+        id="scannerContainer"
+        class="scanner-container"
+        style="display:none;"
+      >
+
+        <div id="reader"></div>
+
+      </div>
+
+
+      <div
+        id="status"
+        class="status"
+        style="display:none;"
+      >
+
+        <span class="status-dot"></span>
+
+        <span>
+          Scanner is active
+        </span>
+
+      </div>
+
+
+      <div id="result"></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer class="footer">
+    Orientation Attendance System
+  </footer>
+
+</div>
+
+
+<script>
+
+  /*
+   * GOOGLE APPS SCRIPT BACKEND
+   */
+
+  const BACKEND_URL =
+    "https://script.google.com/macros/s/AKfycbwXdDw21nDfDvRaGw9WeMnMklZymyQAtqolAr1OVdy5eR2GeywByWS2Ye9EwRjbP4ZVA/exec";
+
+
+  let scanner = null;
+
+  let scanning = false;
+
+
+  /*
+   * START SCANNER
+   */
+
+  function startScanner() {
+
+    if (scanning) {
+      return;
+    }
+
+
+    document.getElementById("startSection").style.display =
+      "none";
+
+    document.getElementById("scannerContainer").style.display =
+      "block";
+
+    document.getElementById("status").style.display =
+      "flex";
+
+
+    scanner = new Html5QrcodeScanner(
+
+      "reader",
+
+      {
+        fps: 10,
+
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+
+          const minEdge =
+            Math.min(viewfinderWidth, viewfinderHeight);
+
+          const size =
+            Math.min(280, Math.max(180, minEdge * 0.65));
+
+          return {
+            width: size,
+            height: size
+          };
+
+        },
+
+        rememberLastUsedCamera: true,
+
+        showTorchButtonIfSupported: true
+
+      },
+
+      false
+
+    );
+
+
+    scanner.render(
+      onScanSuccess,
+      onScanError
+    );
+
+
+    scanning = true;
+
+  }
+
+
+  /*
+   * QR SCAN SUCCESS
+   */
+
+  function onScanSuccess(decodedText) {
+
+    if (!scanning) {
+      return;
+    }
+
+
+    scanning = false;
+
+
+    const token = extractToken(decodedText);
+
+
+    if (!token) {
+
+      showResult(
+
+        "error",
+
+        "❌",
+
+        "Invalid QR Code",
+
+        "This is not a valid Orientation QR code."
+
+      );
+
+
+      restartScanner();
+
+      return;
+
+    }
+
+
+    showResult(
+
+      "warning",
+
+      "⏳",
+
+      "Checking Attendance",
+
+      "Please wait..."
+
+    );
+
+
+    sendAttendance(token);
+
+  }
+
+
+  /*
+   * IGNORE NORMAL SCANNER ERRORS
+   */
+
+  function onScanError(errorMessage) {
+
+    // QR scanner continuously reports
+    // "QR code not found" while searching.
+    // We intentionally ignore these messages.
+
+  }
+
+
+  /*
+   * EXTRACT TOKEN
+   */
+
+  function extractToken(qrText) {
+
+    try {
+
+      const url = new URL(qrText);
+
+      return url.searchParams.get("token");
+
+    }
+
+    catch (error) {
+
+      if (
+        qrText &&
+        qrText.startsWith("OR-")
+      ) {
+
+        return qrText;
+
+      }
+
+      return null;
+
+    }
+
+  }
+
+
+  /*
+   * SEND ATTENDANCE TO BACKEND
+   */
+
+  function sendAttendance(token) {
+
+    fetch(BACKEND_URL, {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+
+      body: JSON.stringify({
+        token: token
+      })
+
+    })
+
+    .then(response => {
+
+      if (!response.ok) {
+
+        throw new Error(
+          "Server returned " + response.status
+        );
+
+      }
+
+      return response.json();
+
+    })
+
+    .then(result => {
+
+      handleAttendanceResult(result);
+
+    })
+
+    .catch(error => {
+
+      console.error(error);
+
+
+      showResult(
+
+        "error",
+
+        "⚠️",
+
+        "Connection Error",
+
+        "Could not connect to the attendance system. Please try again."
+
+      );
+
+
+      restartScanner();
+
+    });
+
+  }
+
+
+  /*
+   * HANDLE BACKEND RESULT
+   */
+
+  function handleAttendanceResult(result) {
+
+    if (!result) {
+
+      showResult(
+
+        "error",
+
+        "⚠️",
+
+        "Unexpected Error",
+
+        "The attendance system returned no response."
+
+      );
+
+      restartScanner();
+
+      return;
+
+    }
+
+
+    if (result.success) {
+
+      showResult(
+
+        "success",
+
+        "✓",
+
+        "Attendance Recorded",
+
+        `
+          <h3>${escapeHtml(result.name)}</h3>
+
+          <p>
+            Student ID:
+            <strong>
+              ${escapeHtml(String(result.id))}
+            </strong>
+          </p>
+
+          <p>
+            Major:
+            <strong>
+              ${escapeHtml(String(result.major))}
+            </strong>
+          </p>
+
+          <p>
+            Time:
+            <strong>
+              ${escapeHtml(result.time)}
+            </strong>
+          </p>
+        `
+
+      );
+
+    }
+
+    else if (result.alreadyAttended) {
+
+      showResult(
+
+        "warning",
+
+        "✓",
+
+        "Already Checked In",
+
+        `
+          <h3>${escapeHtml(result.name)}</h3>
+
+          <p>
+            Student ID:
+            <strong>
+              ${escapeHtml(String(result.id))}
+            </strong>
+          </p>
+
+          <p>
+            First attendance:
+            <strong>
+              ${escapeHtml(result.time)}
+            </strong>
+          </p>
+        `
+
+      );
+
+    }
+
+    else {
+
+      showResult(
+
+        "error",
+
+        "❌",
+
+        "Invalid QR Code",
+
+        escapeHtml(
+          result.message ||
+          "This QR code is not registered."
+        )
+
+      );
+
+    }
+
+
+    restartScanner();
+
+  }
+
+
+  /*
+   * SHOW RESULT
+   */
+
+  function showResult(
+    type,
+    icon,
+    title,
+    content
+  ) {
+
+    const result =
+      document.getElementById("result");
+
+
+    result.className = type;
+
+
+    result.innerHTML = `
+
+      <div class="result-icon">
+        ${icon}
+      </div>
+
+      <h2>
+        ${title}
+      </h2>
+
+      <div>
+        ${content}
+      </div>
+
+    `;
+
+
+    result.style.display = "block";
+
+  }
+
+
+  /*
+   * RESTART
+   */
+
+  function restartScanner() {
+
+    setTimeout(() => {
+
+      const result =
+        document.getElementById("result");
+
+      result.style.display = "none";
+
+
+      scanning = true;
+
+    }, 3000);
+
+  }
+
+
+  /*
+   * ESCAPE HTML
+   */
+
+  function escapeHtml(value) {
+
+    return String(value)
+
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+</script>
+
+</body>
+</html>
