@@ -2388,7 +2388,8 @@ async function startScanner() {
   ========================================================= */
 
   function onScanSuccess(decodedText) {
-
+    const qrDetectedTime = performance.now();
+    console.log("📷 QR DETECTED");
 
     /*
      * Prevent multiple detections of the
@@ -2474,7 +2475,9 @@ async function startScanner() {
 
     );
 
-
+    console.log(
+      `📷 QR processing: ${(performance.now() - qrDetectedTime).toFixed(0)} ms`
+    );
     sendAttendance(token);
 
   }
@@ -2552,105 +2555,103 @@ async function startScanner() {
      SEND ATTENDANCE
   ========================================================= */
 
-  function sendAttendance(token) {
+function sendAttendance(token) {
 
+  const requestStart = performance.now();
 
-    fetch(
+  console.log("🚀 Sending attendance request...");
 
-      BACKEND_URL,
+  fetch(
+    BACKEND_URL,
+    {
+      method: "POST",
 
-      {
+      headers: {
+        "Content-Type":
+          "application/json"
+      },
 
-        method: "POST",
+      body: JSON.stringify({
+        token: token
+      })
+    }
+  )
 
+  .then(function(response) {
 
-        headers: {
+    const fetchFinished = performance.now();
 
-          "Content-Type":
-            "application/json"
+    console.log(
+      "🌐 Fetch completed:",
+      (fetchFinished - requestStart).toFixed(0),
+      "ms"
+    );
 
-        },
+    if (!response.ok) {
 
-
-        body: JSON.stringify({
-
-          token: token
-
-        })
-
-      }
-
-    )
-
-
-    .then(function(response) {
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          "HTTP " + response.status
-        );
-
-      }
-
-
-      return response.json();
-
-    })
-
-
-    .then(function(result) {
-
-
-      handleAttendanceResult(
-        result
+      throw new Error(
+        "HTTP " + response.status
       );
 
-    })
+    }
 
+    return response.json();
 
-    .catch(function(error) {
+  })
 
+  .then(function(result) {
 
-      console.error(
-        "Attendance request failed:",
-        error
-      );
+    const totalTime = performance.now() - requestStart;
 
+    console.log(
+      "⏱️ TOTAL API TIME:",
+      totalTime.toFixed(0),
+      "ms"
+    );
 
-      showResult(
+    console.log(
+      "📦 Response:",
+      result
+    );
 
-        "error",
+    handleAttendanceResult(
+      result
+    );
 
-        "⚠️",
+  })
 
-        "Connection Error",
+  .catch(function(error) {
 
-        `
-          <p>
-            Could not connect to the attendance system.
-          </p>
+    console.error(
+      "Attendance request failed:",
+      error
+    );
 
-          <p>
-            Please try scanning again.
-          </p>
-        `
+    showResult(
+      "error",
+      "⚠️",
+      "Connection Error",
+      `
+        <p>
+          Could not connect to the attendance system.
+        </p>
 
-      );
+        <p>
+          Please try scanning again.
+        </p>
+      `
+    );
 
+    updateStatus(
+      "Connection error",
+      "error"
+    );
 
-      updateStatus(
-        "Connection error",
-        "error"
-      );
+    finishScan();
 
+  });
 
-      finishScan();
-
-    });
-
-  }
+}
 
 
   /* =========================================================
