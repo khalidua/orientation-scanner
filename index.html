@@ -2595,7 +2595,25 @@ function sendAttendance(token) {
 
     }
 
-    return response.json();
+    return response.text().then(function(text) {
+
+  console.log("📄 RAW SERVER RESPONSE:");
+  console.log(text);
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("❌ Response is NOT JSON");
+    console.error("HTTP status:", response.status);
+    console.error("Content-Type:", response.headers.get("content-type"));
+
+    throw new Error(
+      "Server returned non-JSON response: " +
+      text.substring(0, 200)
+    );
+  }
+
+});
 
   })
 
